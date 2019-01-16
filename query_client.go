@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/serializer/json"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
@@ -39,8 +40,17 @@ func main() {
 func PrintResult(infos []*resource.Info) {
 	for _, info := range infos {
 		fmt.Printf("Type : %s, id: %s\n", info.Object.GetObjectKind().GroupVersionKind().Kind, info.Name)
+		resource := info.Object
+		if obj, ok := resource.(metav1.Object); ok {
+			//obj.SetCreationTimestamp(nt)
+			obj.SetGeneration(1)
+			obj.SetUID("")
+			obj.SetSelfLink("")
+			obj.SetCreationTimestamp(metav1.Time{})
+			obj.SetResourceVersion("")
+		}
 		e := json.NewYAMLSerializer(json.DefaultMetaFactory, nil, nil)
-		e.Encode(info.Object,os.Stdout)
+		e.Encode(resource,os.Stdout)
 	}
 }
 
