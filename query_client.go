@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
-	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/serializer/json"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/cli-runtime/pkg/genericclioptions/resource"
-	metav1beta1 "k8s.io/apimachinery/pkg/apis/meta/v1beta1"
+	"os"
 )
 
 var (
@@ -39,6 +39,8 @@ func main() {
 func PrintResult(infos []*resource.Info) {
 	for _, info := range infos {
 		fmt.Printf("Type : %s, id: %s\n", info.Object.GetObjectKind().GroupVersionKind().Kind, info.Name)
+		e := json.NewYAMLSerializer(json.DefaultMetaFactory, nil, nil)
+		e.Encode(info.Object,os.Stdout)
 	}
 }
 
