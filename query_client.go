@@ -33,20 +33,6 @@ func main() {
 	}
 
 	PrintResult(infos)
-
-	objs := make([]runtime.Object, len(infos))
-	for ix := range infos {
-		table, err := DecodeIntoTable(infos[ix].Object)
-		if err == nil {
-			infos[ix].Object = table
-		} else {
-			// if we are unable to decode server response into a v1beta1.Table,
-			// fallback to client-side printing with whatever info the server returned.
-			fmt.Printf("Unable to decode server response into a Table. Falling back to hardcoded types: %v", err)
-		}
-		objs[ix] = infos[ix].Object
-	}
-
 }
 
 
@@ -65,33 +51,4 @@ func NewParams(flags genericclioptions.ConfigFlags) *Params {
 	return &Params{
 		configFlags: genericclioptions.NewConfigFlags(),
 	}
-}
-
-func DecodeIntoTable(obj runtime.Object) (runtime.Object, error) {
-	if obj.GetObjectKind().GroupVersionKind().Kind != "Table" {
-		return nil, fmt.Errorf("attempt to decode non-Table object into a v1beta1.Table")
-	}
-
-	unstr, ok := obj.(*unstructured.Unstructured)
-	if !ok {
-		return nil, fmt.Errorf("attempt to decode non-Unstructured object")
-	}
-	table := &metav1beta1.Table{}
-	if err := runtime.DefaultUnstructuredConverter.FromUnstructured(unstr.Object, table); err != nil {
-		return nil, err
-	}
-
-	for i := range table.Rows {
-		row := &table.Rows[i]
-		if row.Object.Raw == nil || row.Object.Object != nil {
-			continue
-		}
-		converted, err := runtime.Decode(unstructured.UnstructuredJSONScheme, row.Object.Raw)
-		if err != nil {
-			return nil, err
-		}
-		row.Object.Object = converted
-	}
-
-	return table, nil
 }
