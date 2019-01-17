@@ -19,12 +19,14 @@ type ExportOptions struct {
 	args    []string
 	genericclioptions.IOStreams
 	component  *query.Component
+	resources  *query.Resources
 }
 
 func NewExportOptions(streams genericclioptions.IOStreams) *ExportOptions {
 	return &ExportOptions{
 		IOStreams:   streams,
 		component: query.NewComponent(),
+		resources: query.NewResources(),
 	}
 }
 
@@ -69,7 +71,12 @@ func (o *ExportOptions) Run() error {
 	ns := "my-spring-boot"
 
 	o.component.
-		Query(selector,ns,resources)
+		Query(selector)
+
+	o.resources.
+		Query(selector, ns, resources)
+
+
 
 	return nil
 }

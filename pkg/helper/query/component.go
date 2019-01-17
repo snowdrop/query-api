@@ -1,7 +1,6 @@
 package query
 
 import (
-	"github.com/snowdrop/query-api/pkg/helper"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/serializer/json"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -22,11 +21,11 @@ func (c *Component) Config() *QueryOptions {
 	return q
 }
 
-func (c *Component) Query(selector, ns, resources string) error {
+func (c *Component) Query(selector string) error {
 	r := c.Config().builder.
 		 Unstructured().
-		 NamespaceParam(ns).
-		 ResourceTypeOrNameArgs(true, resources).
+		 AllNamespaces(true).
+		 ResourceTypeOrNameArgs(true, "component").
 		 LabelSelector(selector).
 		 Latest().
 		 Flatten().
@@ -42,16 +41,9 @@ func (c *Component) Query(selector, ns, resources string) error {
 }
 
 func (c *Component) PrintResult(infos []*resource.Info) {
-
-	filters := []string{"Pod","ReplicationController","Component"}
-
 	for _, info := range infos {
 		//fmt.Printf("Type : %s, id: %s\n", info.Object.GetObjectKind().GroupVersionKind().Kind, info.Name)
 		resource := info.Object
-		kind := info.Object.GetObjectKind().GroupVersionKind().Kind
-		if helper.In_Array(kind, filters) {
-			continue
-		}
 		if metadata, ok := resource.(metav1.Object); ok {
 			//obj.SetCreationTimestamp(nt)
 			metadata.SetGeneration(1)
@@ -67,24 +59,9 @@ func (c *Component) PrintResult(infos []*resource.Info) {
 		unstruct, _ := runtime.DefaultUnstructuredConverter.ToUnstructured(resource)
 		unstruct["status"] = nil
 
-		if kind == "Service" {
-			spec := unstruct["spec"].(map[string]interface{})
-			// Unset this field otherwise k8s will complaint
-			spec["clusterIP"] = nil
-		}
-
-		if kind == "PersistentVolumeClaim" {
-			spec := unstruct["spec"].(map[string]interface{})
-			// Unset this field otherwise k8s will complaint
-			spec["volumeName"] = nil
-		}
-
-		// e := json.NewYAMLSerializer(json.DefaultMetaFactory, nil, nil)
-		// e.Encode(resource,os.Stdout)
-		list.Items = append(list.Items, runtime.RawExtension{Object: resource.DeepCopyObject()})
+		// Convert Component to YAML output
+		e := json.NewYAMLSerializer(json.DefaultMetaFactory, nil, nil)
+		e.Encode(resource,os.Stdout)
 	}
-	// Convert List of objects to YAML list
-	e := json.NewYAMLSerializer(json.DefaultMetaFactory, nil, nil)
-	e.Encode(list,os.Stdout)
 }
 
