@@ -9,7 +9,7 @@ make all
 - Next, create a new project/namespace and deploy the list of the k8s resource
 ```bash
 oc new-project dummy
-oc create -f result.yaml
+oc create -f result.yml
 ```
 
 - Check if all the resources have been well created like the `replicationController` and `Pod`
