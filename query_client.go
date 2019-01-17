@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	// "fmt"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/serializer/json"
@@ -38,20 +38,35 @@ func main() {
 
 
 func PrintResult(infos []*resource.Info) {
-	for _, info := range infos {
-		fmt.Printf("Type : %s, id: %s\n", info.Object.GetObjectKind().GroupVersionKind().Kind, info.Name)
-		resource := info.Object
-		if obj, ok := resource.(metav1.Object); ok {
-			//obj.SetCreationTimestamp(nt)
-			obj.SetGeneration(1)
-			obj.SetUID("")
-			obj.SetSelfLink("")
-			obj.SetCreationTimestamp(metav1.Time{})
-			obj.SetResourceVersion("")
-		}
-		e := json.NewYAMLSerializer(json.DefaultMetaFactory, nil, nil)
-		e.Encode(resource,os.Stdout)
+
+	list := &metav1.List{
+		TypeMeta: metav1.TypeMeta{
+			Kind: "List",
+			APIVersion: "v1",
+		},
 	}
+
+	for _, info := range infos {
+		//fmt.Printf("Type : %s, id: %s\n", info.Object.GetObjectKind().GroupVersionKind().Kind, info.Name)
+		resource := info.Object
+		if metadata, ok := resource.(metav1.Object); ok {
+			//obj.SetCreationTimestamp(nt)
+			metadata.SetGeneration(1)
+			metadata.SetUID("")
+			metadata.SetSelfLink("")
+			metadata.SetCreationTimestamp(metav1.Time{})
+			metadata.SetResourceVersion("")
+			metadata.SetOwnerReferences(nil)
+		}
+		unstruct, _ := runtime.DefaultUnstructuredConverter.ToUnstructured(resource)
+		unstruct["status"] = nil
+		// e := json.NewYAMLSerializer(json.DefaultMetaFactory, nil, nil)
+		// e.Encode(resource,os.Stdout)
+		list.Items = append(list.Items, runtime.RawExtension{Object: resource.DeepCopyObject()})
+	}
+	// Convert List of objects to YAML list
+	e := json.NewYAMLSerializer(json.DefaultMetaFactory, nil, nil)
+	e.Encode(list,os.Stdout)
 }
 
 type Params struct {
