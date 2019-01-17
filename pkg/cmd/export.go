@@ -1,25 +1,81 @@
-package main
+package cmd
 
 import (
-	// "fmt"
+	"fmt"
+	"github.com/spf13/cobra"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/serializer/json"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/cli-runtime/pkg/genericclioptions/resource"
 	"os"
+
 )
 
+var (
+	infoExample = `
+	# Collect the kubernetes resources of a component
+	%[1]s export all
+`
+)
 
-func main() {
-	o := NewParams(genericclioptions.ConfigFlags{})
+type ExportOptions struct {
+	configFlags *genericclioptions.ConfigFlags
+	builder *resource.Builder
+	args    []string
+	genericclioptions.IOStreams
+}
+
+func NewExportOptions(streams genericclioptions.IOStreams) *ExportOptions {
+	return &ExportOptions{
+		configFlags: genericclioptions.NewConfigFlags(),
+		IOStreams:   streams,
+	}
+}
+
+func NewCmdExport(streams genericclioptions.IOStreams) *cobra.Command {
+	o := NewExportOptions(streams)
+
+	cmd := &cobra.Command{
+		Use:          "export [flags]",
+		Short:        "Collect kubernetes resources and export them",
+		Example:      fmt.Sprintf(infoExample),
+		SilenceUsage: true,
+		RunE: func(c *cobra.Command, args []string) error {
+			if err := o.Complete(c, args); err != nil {
+				return err
+			}
+			if err := o.Validate(); err != nil {
+				return err
+			}
+			if err := o.Run(); err != nil {
+				return err
+			}
+
+			return nil
+		},
+	}
+
+	return cmd
+}
+
+func (o *ExportOptions) Complete(cmd *cobra.Command, args []string) error {
+	o.args = args
 	o.configFlags.ToRESTConfig()
 	o.builder = resource.NewBuilder(o.configFlags)
 
+	return nil
+}
+
+func (o *ExportOptions) Validate() error {
+	return nil
+}
+
+func (o *ExportOptions) Run() error {
 	r := o.builder.
 		Unstructured().
 		NamespaceParam("my-spring-boot").
-		ResourceTypeOrNameArgs(true, "all,pvc").
+		ResourceTypeOrNameArgs(true, o.args...).
 		LabelSelector("app=my-spring-boot ").
 		Latest().
 		Flatten().
@@ -30,11 +86,12 @@ func main() {
 		panic(err)
 	}
 
-	PrintResult(infos)
+	o.PrintResult(infos)
+
+	return nil
 }
 
-
-func PrintResult(infos []*resource.Info) {
+func (o *ExportOptions) PrintResult(infos []*resource.Info) {
 
 	list := &metav1.List{
 		TypeMeta: metav1.TypeMeta{
@@ -95,15 +152,4 @@ func in_array(val string, resources []string) bool {
 		}
 	}
 	return false
-}
-
-type Params struct {
-	configFlags *genericclioptions.ConfigFlags
-	builder     *resource.Builder
-}
-
-func NewParams(flags genericclioptions.ConfigFlags) *Params {
-	return &Params{
-		configFlags: genericclioptions.NewConfigFlags(),
-	}
 }

@@ -114,6 +114,59 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:83243ad0c3261036fef7b102f5e23aa09df4603355c4037925dd9cfe7daca538"
+  name = "github.com/openshift/api"
+  packages = [
+    ".",
+    "apps",
+    "apps/v1",
+    "authorization",
+    "authorization/v1",
+    "build",
+    "build/v1",
+    "config",
+    "config/v1",
+    "image",
+    "image/docker10",
+    "image/dockerpre012",
+    "image/v1",
+    "kubecontrolplane",
+    "kubecontrolplane/v1",
+    "legacyconfig/v1",
+    "network",
+    "network/v1",
+    "oauth",
+    "oauth/v1",
+    "openshiftcontrolplane",
+    "openshiftcontrolplane/v1",
+    "operator",
+    "operator/v1",
+    "operator/v1alpha1",
+    "osin",
+    "osin/v1",
+    "pkg/serialization",
+    "project",
+    "project/v1",
+    "quota",
+    "quota/v1",
+    "route",
+    "route/v1",
+    "security",
+    "security/v1",
+    "servicecertsigner",
+    "servicecertsigner/v1alpha1",
+    "template",
+    "template/v1",
+    "user",
+    "user/v1",
+    "webconsole",
+    "webconsole/v1",
+  ]
+  pruneopts = "UT"
+  revision = "c3ef7090a436a4ce1334e8a0401083b072dc7ab8"
+
+[[projects]]
+  branch = "master"
   digest = "1:3bf17a6e6eaa6ad24152148a631d18662f7212e21637c2699bff3369b7f00fa2"
   name = "github.com/petar/GoLLRB"
   packages = ["llrb"]
@@ -253,9 +306,10 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:30dc534f707347e0b0abf615526a94281318dd76b1c9ce2244fa5a6634ae9ba4"
+  digest = "1:20a5528dde1d80f6a439d96dd60dad9eff2a1431a068455591be59e94cb5fe97"
   name = "k8s.io/api"
   packages = [
+    "admission/v1beta1",
     "admissionregistration/v1alpha1",
     "admissionregistration/v1beta1",
     "apps/v1",
@@ -278,6 +332,7 @@
     "core/v1",
     "events/v1beta1",
     "extensions/v1beta1",
+    "imagepolicy/v1alpha1",
     "networking/v1",
     "policy/v1beta1",
     "rbac/v1",
@@ -350,46 +405,11 @@
   revision = "5702a69c455d3a129efbc2e86f8de61eb1af25a5"
 
 [[projects]]
-  digest = "1:fe73c66a27c6f178680e3442aa7bab5d7c4ccae4b53b53e69a99bcf2a011fb51"
+  digest = "1:b935581079fb4b4b183bc272137ea8cfcbf475f5d87c2731bcc39ee8572ae7ae"
   name = "k8s.io/client-go"
   packages = [
     "discovery",
-    "dynamic",
-    "kubernetes",
     "kubernetes/scheme",
-    "kubernetes/typed/admissionregistration/v1alpha1",
-    "kubernetes/typed/admissionregistration/v1beta1",
-    "kubernetes/typed/apps/v1",
-    "kubernetes/typed/apps/v1beta1",
-    "kubernetes/typed/apps/v1beta2",
-    "kubernetes/typed/auditregistration/v1alpha1",
-    "kubernetes/typed/authentication/v1",
-    "kubernetes/typed/authentication/v1beta1",
-    "kubernetes/typed/authorization/v1",
-    "kubernetes/typed/authorization/v1beta1",
-    "kubernetes/typed/autoscaling/v1",
-    "kubernetes/typed/autoscaling/v2beta1",
-    "kubernetes/typed/autoscaling/v2beta2",
-    "kubernetes/typed/batch/v1",
-    "kubernetes/typed/batch/v1beta1",
-    "kubernetes/typed/batch/v2alpha1",
-    "kubernetes/typed/certificates/v1beta1",
-    "kubernetes/typed/coordination/v1",
-    "kubernetes/typed/coordination/v1beta1",
-    "kubernetes/typed/core/v1",
-    "kubernetes/typed/events/v1beta1",
-    "kubernetes/typed/extensions/v1beta1",
-    "kubernetes/typed/networking/v1",
-    "kubernetes/typed/policy/v1beta1",
-    "kubernetes/typed/rbac/v1",
-    "kubernetes/typed/rbac/v1alpha1",
-    "kubernetes/typed/rbac/v1beta1",
-    "kubernetes/typed/scheduling/v1alpha1",
-    "kubernetes/typed/scheduling/v1beta1",
-    "kubernetes/typed/settings/v1alpha1",
-    "kubernetes/typed/storage/v1",
-    "kubernetes/typed/storage/v1alpha1",
-    "kubernetes/typed/storage/v1beta1",
     "pkg/apis/clientauthentication",
     "pkg/apis/clientauthentication/v1alpha1",
     "pkg/apis/clientauthentication/v1beta1",
@@ -405,7 +425,6 @@
     "tools/clientcmd/api/latest",
     "tools/clientcmd/api/v1",
     "tools/metrics",
-    "tools/reference",
     "transport",
     "util/cert",
     "util/connrotation",
@@ -437,14 +456,15 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/openshift/api",
+    "github.com/openshift/api/config/v1",
+    "github.com/spf13/cobra",
+    "github.com/spf13/pflag",
     "k8s.io/apimachinery/pkg/apis/meta/v1",
     "k8s.io/apimachinery/pkg/runtime",
+    "k8s.io/apimachinery/pkg/runtime/serializer/json",
     "k8s.io/cli-runtime/pkg/genericclioptions",
     "k8s.io/cli-runtime/pkg/genericclioptions/resource",
-    "k8s.io/client-go/discovery",
-    "k8s.io/client-go/dynamic",
-    "k8s.io/client-go/kubernetes",
-    "k8s.io/client-go/tools/clientcmd",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

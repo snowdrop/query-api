@@ -5,6 +5,12 @@
 go run query_client.go > result.yml
 ```
 
+- Build the go tool locally and use it as cobra command
+```bash
+make all./bin/odo export all
+
+```
+
 - Next, create a new project/namespace and deploy the list of the k8s resource
 ```bash
 oc new-project dummy
