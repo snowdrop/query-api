@@ -18,13 +18,13 @@ var (
 type ExportOptions struct {
 	args    []string
 	genericclioptions.IOStreams
-	queryComponent  *query.Component
+	component  *query.Component
 }
 
 func NewExportOptions(streams genericclioptions.IOStreams) *ExportOptions {
 	return &ExportOptions{
 		IOStreams:   streams,
-		queryComponent: query.NewComponent(),
+		component: query.NewComponent(),
 	}
 }
 
@@ -64,7 +64,12 @@ func (o *ExportOptions) Validate() error {
 }
 
 func (o *ExportOptions) Run() error {
-	o.queryComponent.Query("app=my-spring-boot ","my-spring-boot",strings.Join(o.args[:],","))
+	resources := strings.Join(o.args[:],",")
+	selector := "app=my-spring-boot"
+	ns := "my-spring-boot"
+
+	o.component.
+		Query(selector,ns,resources)
 
 	return nil
 }
