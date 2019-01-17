@@ -1,14 +1,9 @@
 ## Instructions
 
-- To play with the go `query_client.go`, execute this command to generate a list of resources
-```bash
-go run query_client.go > result.yml
-```
-
 - Build the go tool locally and use it as cobra command
 ```bash
-make all./bin/odo export all
-
+make all
+./bin/odo export all,pvc > result.yml
 ```
 
 - Next, create a new project/namespace and deploy the list of the k8s resource
