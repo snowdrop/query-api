@@ -22,7 +22,7 @@ func main() {
 	r := o.builder.
 		Unstructured().
 		NamespaceParam("my-spring-boot").
-		ResourceTypeOrNameArgs(true, "all").
+		ResourceTypeOrNameArgs(true, "all,pvc").
 		LabelSelector("app=my-spring-boot ").
 		Latest().
 		Flatten().
@@ -46,7 +46,7 @@ func PrintResult(infos []*resource.Info) {
 		},
 	}
 
-	filters := []string{"Pod","ReplicationController"}
+	filters := []string{"Pod","ReplicationController","Component"}
 
 	for _, info := range infos {
 		//fmt.Printf("Type : %s, id: %s\n", info.Object.GetObjectKind().GroupVersionKind().Kind, info.Name)
@@ -63,9 +63,25 @@ func PrintResult(infos []*resource.Info) {
 			metadata.SetCreationTimestamp(metav1.Time{})
 			metadata.SetResourceVersion("")
 			metadata.SetOwnerReferences(nil)
+			metadata.SetNamespace("")
+			metadata.SetAnnotations(map[string]string{})
 		}
+		// TODO : Is there a better to access Spec, Status ...
 		unstruct, _ := runtime.DefaultUnstructuredConverter.ToUnstructured(resource)
 		unstruct["status"] = nil
+
+		if kind == "Service" {
+			spec := unstruct["spec"].(map[string]interface{})
+			// Unset this field otherwise k8s will complaint
+			spec["clusterIP"] = nil
+		}
+
+		if kind == "PersistentVolumeClaim" {
+			spec := unstruct["spec"].(map[string]interface{})
+			// Unset this field otherwise k8s will complaint
+			spec["volumeName"] = nil
+		}
+
 		// e := json.NewYAMLSerializer(json.DefaultMetaFactory, nil, nil)
 		// e.Encode(resource,os.Stdout)
 		list.Items = append(list.Items, runtime.RawExtension{Object: resource.DeepCopyObject()})
