@@ -46,9 +46,15 @@ func PrintResult(infos []*resource.Info) {
 		},
 	}
 
+	filters := []string{"Pod","ReplicationController"}
+
 	for _, info := range infos {
 		//fmt.Printf("Type : %s, id: %s\n", info.Object.GetObjectKind().GroupVersionKind().Kind, info.Name)
 		resource := info.Object
+		kind := info.Object.GetObjectKind().GroupVersionKind().Kind
+		if in_array(kind, filters) {
+			continue
+		}
 		if metadata, ok := resource.(metav1.Object); ok {
 			//obj.SetCreationTimestamp(nt)
 			metadata.SetGeneration(1)
@@ -67,6 +73,15 @@ func PrintResult(infos []*resource.Info) {
 	// Convert List of objects to YAML list
 	e := json.NewYAMLSerializer(json.DefaultMetaFactory, nil, nil)
 	e.Encode(list,os.Stdout)
+}
+
+func in_array(val string, resources []string) bool {
+	for _, r := range resources {
+		if r == val {
+			return true
+		}
+	}
+	return false
 }
 
 type Params struct {
