@@ -31,6 +31,7 @@ type Params struct {
 	resources string
 	selector string
 	ns string
+	version string
 }
 
 func init() {
@@ -85,6 +86,7 @@ func (o *ExportOptions) Run(cmd *cobra.Command, args []string, p Params) error {
 		p.ns = component.GetNamespace()
 		p.selector = "app=" + component.GetLabels()["app"]
 		p.resources = "all,pvc"
+		p.version = "1.0"
 
 		// Fetch the k8s resources which correspond to the component
 		infos, err := o.resources.
@@ -97,7 +99,10 @@ func (o *ExportOptions) Run(cmd *cobra.Command, args []string, p Params) error {
 		if p.output == "yaml" {
 			o.resources.PrintYamlResult(infos)
 		} else {
-			// TODO - Generate Helm chart
+			err := o.resources.GenerateHelmChart(component, infos)
+			if err != nil {
+				return err
+			}
 		}
 
 	} else {
