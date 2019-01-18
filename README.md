@@ -1,14 +1,18 @@
 ## Instructions
 
-- Build the go tool locally and use it as cobra command
+### Build the go tool
+
+- Build the go tool locally
 ```bash
+git clone https://github.com/snowdrop/query-api.git && cd query-api 
 make all
-./bin/odo export -c my-spring-boot > result.yml
 ```
 
-- Export the resources as Helm Chart
+### Generate list of k8s yaml resources
+
+- Build the go tool locally and use it as cobra command
 ```bash
-./bin/odo export -c my-spring-boot -o helm
+./bin/odo export -c my-spring-boot > result.yml
 ```
 
 - Next, create a new project/namespace and deploy the list of the k8s resource
@@ -38,4 +42,29 @@ imagestream.image.openshift.io/dev-runtime-spring-boot   172.30.1.1:5000/my-spri
 
 NAME                                           STATUS    VOLUME    CAPACITY   ACCESS MODES   STORAGECLASS   AGE
 persistentvolumeclaim/m2-data-my-spring-boot   Bound     pv0068    100Gi      RWO,ROX,RWX                   3m
+```
+
+### Export resources as helm chart
+
+- Export the resources as Helm Chart
+```bash
+./bin/odo export -c my-spring-boot -o helm
+```
+
+- Check the chart project created locally for `my-spring-boot` component
+```bash
+tree my-spring-boot 
+my-spring-boot
+├── Chart.yaml
+├── charts
+├── templates
+│   ├── NOTES.txt
+│   ├── _helpers.tpl
+│   ├── deploymentconfig.yml
+│   ├── imagestream.yml
+│   ├── persistentvolumeclaim.yml
+│   └── service.yml
+└── values.yaml
+
+2 directories, 8 files
 ```
