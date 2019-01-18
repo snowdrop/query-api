@@ -5,9 +5,9 @@ import (
 	"github.com/redhat-developer/odo/pkg/log"
 	"github.com/snowdrop/query-api/pkg/helper/query"
 	"github.com/spf13/cobra"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"os"
-	"strings"
 )
 
 type ExportOptions struct {
@@ -28,6 +28,8 @@ func NewExportOptions(streams genericclioptions.IOStreams) *ExportOptions {
 type Params struct {
 	output string
 	component string
+	resources string
+	selector string
 	ns string
 }
 
@@ -72,27 +74,35 @@ func (o *ExportOptions) Validate(cmd *cobra.Command, args []string) error {
 }
 
 func (o *ExportOptions) Run(cmd *cobra.Command, args []string, p Params) error {
-	resources := strings.Join(o.args[:],",")
 	selector := "app=" + p.component
-	ns := p.component
-
 	infos, err := o.component.Query(selector)
 	if err != nil {
 		return err
 	}
+
 	if len(infos) > 0 {
+		component := infos[0].Object.(metav1.Object)
+		p.ns = component.GetNamespace()
+		p.selector = "app=" + component.GetLabels()["app"]
+		p.resources = "all,pvc"
+
+		// Fetch the k8s resources which correspond to the component
+		infos, err := o.resources.
+			Query(p.selector, p.ns, p.resources)
+		if err != nil {
+			return err
+		}
+
+		// Generate the resources as Yaml list
 		if p.output == "yaml" {
-			o.component.PrintYamlResult(infos)
+			o.resources.PrintYamlResult(infos)
 		} else {
 			// TODO - Generate Helm chart
 		}
+
 	} else {
 		log.Errorf("No component found for %s",p.component)
 	}
-
-	// Fetch k8s resources
-	o.resources.
-		Query(selector, ns, resources)
 
 	return nil
 }

@@ -22,7 +22,7 @@ func (r *Resources) Config() *QueryOptions {
 	return q
 }
 
-func (r *Resources) Query(selector, ns, resources string) error {
+func (r *Resources) Query(selector, ns, resources string) ([] *resource.Info, error) {
 	resp := r.Config().builder.
 		Unstructured().
 		NamespaceParam(ns).
@@ -34,14 +34,13 @@ func (r *Resources) Query(selector, ns, resources string) error {
 
 	infos, err := resp.Infos()
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	r.PrintResult(infos)
 
-	return nil
+	return infos, nil
 }
 
-func (r *Resources) PrintResult(infos []*resource.Info) {
+func (r *Resources) PrintYamlResult(infos []*resource.Info) {
 
 	filters := []string{"Pod","ReplicationController","Component"}
 
