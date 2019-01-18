@@ -6,6 +6,11 @@ make all
 ./bin/odo export -c my-spring-boot > result.yml
 ```
 
+- Export the resources as Helm Chart
+```bash
+./bin/odo export -c my-spring-boot -o helm
+```
+
 - Next, create a new project/namespace and deploy the list of the k8s resource
 ```bash
 oc new-project dummy
