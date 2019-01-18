@@ -3,7 +3,7 @@
 - Build the go tool locally and use it as cobra command
 ```bash
 make all
-./bin/odo export all,pvc -o yaml > result.yml
+./bin/odo export all,pvc -c my-spring-boot > result.yml
 ```
 
 - Next, create a new project/namespace and deploy the list of the k8s resource

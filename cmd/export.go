@@ -58,7 +58,7 @@ func init() {
 		},
 	}
 	cmd.PersistentFlags().StringVarP(&p.component, "component", "c","","Component to look for")
-	cmd.PersistentFlags().StringVarP(&p.output, "output", "o","","Output type : yaml, helm")
+	cmd.PersistentFlags().StringVarP(&p.output, "output", "o","yaml","Output type : yaml, helm")
 	rootCmd.AddCommand(cmd)
 }
 
