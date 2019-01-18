@@ -21,7 +21,7 @@ func (c *Component) Config() *QueryOptions {
 	return q
 }
 
-func (c *Component) Query(selector string) error {
+func (c *Component) Query(selector string) ([]*resource.Info, error) {
 	r := c.Config().builder.
 		 Unstructured().
 		 AllNamespaces(true).
@@ -33,14 +33,12 @@ func (c *Component) Query(selector string) error {
 
 	infos, err := r.Infos()
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	c.PrintResult(infos)
-
-	return nil
+	return infos, nil
 }
 
-func (c *Component) PrintResult(infos []*resource.Info) {
+func (c *Component) PrintYamlResult(infos []*resource.Info) {
 	for _, info := range infos {
 		//fmt.Printf("Type : %s, id: %s\n", info.Object.GetObjectKind().GroupVersionKind().Kind, info.Name)
 		resource := info.Object

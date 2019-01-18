@@ -24,15 +24,22 @@
 #   go-tests = true
 #   unused-packages = true
 
-
-[[constraint]]
-  branch = "master"
-  name = "k8s.io/cli-runtime"
-
 [prune]
   go-tests = true
   unused-packages = true
 
 [[constraint]]
   branch = "master"
+  name = "k8s.io/cli-runtime"
+
+[[constraint]]
+  name = "k8s.io/helm"
+  version = "~v2.9.0"
+
+[[override]]
+  branch = "master"
   name = "github.com/openshift/api"
+
+[[override]]
+  name="github.com/sirupsen/logrus"
+  version="v1.0.5"
