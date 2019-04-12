@@ -1,6 +1,6 @@
 ## Export resources
 
-The purpose of this project is to define an approach and `FluentBuilder` to query the resources from a Custome Resource such as a `Component CR` that we would like to export as Helm chart, kubernetes list, ...
+The purpose of this project is to define an approach and `FluentBuilder` to query the resources from a `K8s Custom Resource` such as a `Component` that we would like to export as Helm chart, kubernetes list, ...
 
 https://github.com/snowdrop/query-api/blob/master/cmd/export.go#L84-L106
 
