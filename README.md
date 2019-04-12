@@ -1,3 +1,10 @@
+## Export resources
+
+The purpose of this project is to define an approach and `FluentBuilder` to query the resources that we would like to export as Helm chart, kubernetes list, ...
+
+https://github.com/snowdrop/query-api/blob/master/cmd/export.go#L84-L106
+
+
 ## Instructions
 
 ### Build the go tool
