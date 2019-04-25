@@ -11,27 +11,27 @@ import (
 )
 
 type ExportOptions struct {
-	args    []string
+	args []string
 	genericclioptions.IOStreams
-	component  *query.Component
-	resources  *query.Resources
+	component *query.Component
+	resources *query.Resources
 }
 
 func NewExportOptions(streams genericclioptions.IOStreams) *ExportOptions {
 	return &ExportOptions{
-		IOStreams:   streams,
+		IOStreams: streams,
 		component: query.NewComponent(),
 		resources: query.NewResources(),
 	}
 }
 
 type Params struct {
-	output string
+	output    string
 	component string
 	resources string
-	selector string
-	ns string
-	version string
+	selector  string
+	ns        string
+	version   string
 }
 
 func init() {
@@ -60,8 +60,8 @@ func init() {
 			return nil
 		},
 	}
-	cmd.PersistentFlags().StringVarP(&p.component, "component", "c","","Component to look for")
-	cmd.PersistentFlags().StringVarP(&p.output, "output", "o","yaml","Output type : yaml, helm")
+	cmd.PersistentFlags().StringVarP(&p.component, "component", "c", "", "Component to look for")
+	cmd.PersistentFlags().StringVarP(&p.output, "output", "o", "yaml", "Output type : yaml, helm")
 	rootCmd.AddCommand(cmd)
 }
 
@@ -106,7 +106,7 @@ func (o *ExportOptions) Run(cmd *cobra.Command, args []string, p Params) error {
 		}
 
 	} else {
-		log.Errorf("No component found for %s",p.component)
+		log.Errorf("No component found for %s", p.component)
 	}
 
 	return nil
