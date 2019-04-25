@@ -50,6 +50,24 @@ func (r *Resources) Query(selector, ns, resources string) ([] *resource.Info, er
 	return infos, nil
 }
 
+func (r *Resources) QueryByField(fieldSelector, ns, resources string) ([] *resource.Info, error) {
+	resp := r.Config().builder.
+		Unstructured().
+		NamespaceParam(ns).
+		ResourceTypeOrNameArgs(true, resources).
+		FieldSelectorParam(fieldSelector).
+		Latest().
+		Flatten().
+		Do()
+
+	infos, err := resp.Infos()
+	if err != nil {
+		return nil, err
+	}
+
+	return infos, nil
+}
+
 func (r *Resources) PrintYamlResult(infos []*resource.Info) {
 
 	for _, info := range infos {
