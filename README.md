@@ -15,11 +15,17 @@ git clone https://github.com/snowdrop/query-api.git && cd query-api
 make all
 ```
 
+### Query resources using Field
+
+```bash
+./bin/tool search
+```
+
 ### Generate list of k8s yaml resources
 
 - Build the go tool locally and use it as cobra command
 ```bash
-./bin/odo export -c my-spring-boot > result.yml
+./bin/tool export -c my-spring-boot > result.yml
 ```
 
 - Next, create a new project/namespace and deploy the list of the k8s resource
@@ -55,7 +61,7 @@ persistentvolumeclaim/m2-data-my-spring-boot   Bound     pv0068    100Gi      RW
 
 - Export the resources as Helm Chart
 ```bash
-./bin/odo export -c my-spring-boot -o helm
+./bin/tool export -c my-spring-boot -o helm
 ```
 
 - Check the chart project created locally for `my-spring-boot` component
